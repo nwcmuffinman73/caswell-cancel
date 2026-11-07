@@ -1,0 +1,30 @@
+[project]
+name = "caswell-cancel"
+version = "0.1.0"
+description = "Caswell Cancel: browser risk sensor. Corpus pipeline for training the site-risk model."
+requires-python = ">=3.12"
+dependencies = [
+  "httpx[http2]>=0.27",
+  "typer>=0.12",
+  "rich>=13",
+  "tldextract>=5",
+  "cryptography>=43",
+  "scikit-learn>=1.5",
+  "pandas>=2.2",
+  "pyarrow>=17",
+  "beautifulsoup4>=4.12",
+  "lxml>=5",
+  "torch>=2.4",
+  "onnx>=1.16",
+  "onnxruntime>=1.19",
+]
+
+[project.scripts]
+cc = "corpus.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/corpus"]

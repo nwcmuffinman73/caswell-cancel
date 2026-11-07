@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Caswell Cancel",
+  "version": "0.1.0",
+  "description": "Browser risk sensor and preventer. Deterministic rules now; local ML risk model next.",
+  "permissions": ["downloads", "tabs", "webNavigation", "storage", "notifications", "alarms"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background.js",
+    "scripts": ["src/background.js"],
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Caswell Cancel",
+    "default_popup": "popup.html"
+  },
+  "icons": { "128": "icons/icon128.png" },
+  "browser_specific_settings": {
+    "gecko": { "id": "caswell-cancel@nicholascaswell.github.io", "strict_min_version": "121.0" }
+  }
+}
