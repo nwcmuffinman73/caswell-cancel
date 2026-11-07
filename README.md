@@ -8,6 +8,32 @@ Lineage: [CaswellCancel](https://github.com/NicholasCaswell/CaswellCancel) (2020
 is the foundation; [CaZentry](https://github.com/NicholasCaswell/CaZentry) (2024, master's
 project) is the inspiration. Both are cloned under `legacy/` for reference.
 
+## Repository map
+
+```
+src/corpus/      the data and model pipeline (Python, run via `uv run cc <command>`)
+  feeds.py         where labeled URLs come from: Tranco (benign), OpenPhish/PhishTank (phishing),
+                   URLhaus (malware), Common Crawl + Wayback samplers (benign pages on the same
+                   platforms that host phish), a spider for deep/login pages on known-benign sites
+  crawl.py         fetches each URL once: HTML, redirect chain, headers, TLS cert; follows client-side
+                   redirects; classifies what actually landed (live / takedown / auth wall / app shell …);
+                   refuses to crawl malicious labels when an ISP security product is rewriting them
+  db.py            the SQLite corpus: urls + snapshots, timestamped so splits can be temporal
+  features.py      turns a snapshot into ~85 numbers a browser extension could also compute
+  train.py         the evaluation harness: recall at fixed false-positive rates, group/temporal splits,
+                   calibrated thresholds; gradient-boosted baseline
+  urlmodel.py      the URL character CNN (first deep-learning tier), ONNX export, fixed probe set
+  urlharvest.py    benign URL strings with realistic paths (page links, sitemaps, GitHub API)
+  render.py        Mac side of the rendering stage: build worklist → VM → merge results back
+  cli.py           the `cc` command surface
+vm/              the isolated render VM (UTM): guest setup, the Playwright worker, containment rules
+extension/       the browser extension (Manifest V3, Chrome/Edge/Brave/Firefox from one codebase):
+                   rule tier (download gate, drive-by, homoglyph), risk fusion, policy, popup
+scripts/         daily.sh, run by launchd at 06:30: ingest every feed, crawl benign, triage
+data/            NOT in git. corpus.sqlite, content-addressed snapshots (~11 GB), renders, models
+legacy/          NOT in git. clones of CaswellCancel (2020) and CaZentry (2024) for reference
+```
+
 ## Build order
 
 1. **Corpus pipeline** (this stage) — ingest labeled feeds, snapshot pages daily, timestamp everything.
