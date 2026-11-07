@@ -1,8 +1,39 @@
 # Caswell Cancel
 
-A browser risk sensor and preventer. Deep-learning site-risk model, trained on a large labeled
-corpus, shipped inside a cross-browser (WebExtensions / MV3) extension with a deterministic rule
-tier in front of it.
+A browser risk sensor and preventer: a cross-browser extension that scores the page you are about to
+load and the file you are about to download, and warns, pauses or cancels before harm. A small local
+risk model, trained on public phishing and malware feeds, sits behind a deterministic rule tier.
+
+**Who it's for.** Anyone who browses. The goal is a free extension that works the same in Chrome,
+Edge, Brave and Firefox, runs entirely on-device, and does not phone home. It is a personal project,
+owned by its author, not tied to any employer or business.
+
+**What it is not.** This is defensive tooling only. The corpus pipeline reads public threat feeds
+(PhishTank, OpenPhish, URLhaus) to learn what malicious pages look like; it never stores malware
+binaries (hash and first bytes only), never executes anything outside an isolated VM, and holds no
+personal data. There is no exploit code here.
+
+**Built with.** Python 3.12 (httpx, BeautifulSoup, scikit-learn, PyTorch → ONNX), SQLite,
+Playwright in a UTM/Ubuntu VM, and a Manifest V3 WebExtension (plain JavaScript, webextension-polyfill).
+
+## Quick start
+
+```sh
+# pipeline (macOS/Linux; needs uv: https://docs.astral.sh/uv/)
+uv sync
+uv run cc ingest tranco --limit 5000     # benign hosts
+uv run cc ingest openphish               # phishing feed
+uv run cc crawl --label benign --limit 200
+uv run cc crawl --label phishing --limit 200
+uv run cc triage && uv run cc stats
+uv run cc features && uv run cc train    # baseline + FP-targeted report in data/models/
+
+# extension (developer load)
+#   Chrome/Edge/Brave: chrome://extensions → Developer mode → Load unpacked → ./extension
+#   Firefox: about:debugging → This Firefox → Load Temporary Add-on → extension/manifest.json
+```
+
+Planned work is in [ROADMAP.md](ROADMAP.md).
 
 Lineage: [CaswellCancel](https://github.com/NicholasCaswell/CaswellCancel) (2020, download gate)
 is the foundation; [CaZentry](https://github.com/NicholasCaswell/CaZentry) (2024, master's
