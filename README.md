@@ -13,6 +13,9 @@ owned by its author, not tied to any employer or business.
 binaries (hash and first bytes only), never executes anything outside an isolated VM, and holds no
 personal data. There is no exploit code here.
 
+**License.** Mozilla Public License 2.0: modifications to these files must stay open; you may build
+proprietary software around them. See [LICENSE](LICENSE).
+
 **Built with.** Python 3.12 (httpx, BeautifulSoup, scikit-learn, PyTorch → ONNX), SQLite,
 Playwright in a UTM/Ubuntu VM, and a Manifest V3 WebExtension (plain JavaScript, webextension-polyfill).
 
